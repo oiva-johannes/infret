@@ -1,2 +1,2 @@
 # infret
-Information retrieval NLP application
+Information retrieval NLP playground

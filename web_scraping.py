@@ -4,10 +4,11 @@ import re
 import pandas as pd
 import os
 
-if os.path.isfile("./article_dataset.txt"):
-    os.remove("./article_dataset.txt")
-if os.path.isfile("./articles_excel.xlsx"):
-    os.remove("./articles_excel.xlsx")
+if os.path.isfile("./dynamic-datasets/article_dataset.txt"):
+    os.remove("./dynamic-datasets/article_dataset.txt")
+if os.path.isfile("./dynamic-datasets/articles_excel.xlsx"):
+    os.remove("./dynamic-datasets/articles_excel.xlsx")
+
 
 def ScrapeYle(articles):
 
@@ -52,10 +53,10 @@ def ScrapeYle(articles):
                 "header": header,
                 "href": href,
                 "text": text,
-                "provider": provider}, index=[0])
+                "provider": provider}, index=[len(articles)])
             
             articles.append(df)
-            file = open("article_dataset.txt", mode="a", encoding='utf-8')  # append mode
+            file = open("dynamic-datasets/article_dataset.txt", mode="a", encoding='utf-8')  # append mode
             file.write(f'<article name="{header}" href="{href}">\n')
             file.write(text)
             file.write(f'\n</article>\n')
@@ -74,7 +75,7 @@ def main():
     articles = []
     ScrapeYle(articles)
     df = pd.concat(articles)
-    df.to_excel('articles_excel.xlsx', index=True)
+    df.to_excel('dynamic-datasets/articles_excel.xlsx', index=True)
 
 
 if __name__ == "__main__":

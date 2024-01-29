@@ -10,7 +10,7 @@ if os.path.isfile("./dynamic-datasets/articles_excel.xlsx"):
     os.remove("./dynamic-datasets/articles_excel.xlsx")
 
 
-def ScrapeYle(articles):
+def ScrapeYle(articles: list[pd.DataFrame]):
 
     source = requests.get("https://yle.fi")
     source.raise_for_status() #Raises an error if there is a problem with the url

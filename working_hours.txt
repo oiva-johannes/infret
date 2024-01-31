@@ -1,0 +1,9 @@
+Working hours
+
+Week 2 tasks:
+
+Emma:
+
+27.1	2h	Trying to make a webscraper for Helsingin Sanomat
+28.1	45 min	Had a call with the team, where we discussed the tasks and divided them
+29.1	6h	Did the search engine task (parts 1, 2, 3 and 5)

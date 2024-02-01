@@ -14,7 +14,6 @@ def search(file_path):
     sparse_matrix = cv.fit_transform(documents) # create sparse matrix to save space
     sparse_td_matrix = sparse_matrix.T.tocsr() # convert the matrix to CSR (ordered by terms) and transpose it, creating an inverted index
     t2i = cv.vocabulary_ # creates a dictionary with terms as keys and term-indices as values
-    print(t2i)
     
     query(sparse_td_matrix, t2i, documents) # run the actual query
 
@@ -55,13 +54,13 @@ def query_result(query, sparse_td_matrix, t2i, documents): # get the query resul
             hits_matrix = eval(rewrite_query(query, sparse_td_matrix, t2i)) # check how many matches there are
             hits_list = list(hits_matrix.nonzero()[1]) # convert the matches to a list
 
-            print(f"Total number of matced documents: {len(hits_list)}") # print the total amount of matches
+            print(f"Total number of matched documents: {len(hits_list)}") # print the total amount of matches
                 
             for i, doc_idx in enumerate(hits_list[:5]): # enumerate the documents 
                 document = documents[doc_idx]
                 sentences = re.split(r'(?<=[.!?])\s+', document) # split the documents to sentences, using positive lookbehind
                 
-                n = 15 # number of sentences to be shown of each document
+                n = 3 # number of sentences to be shown of each document
                 first_n_sentences = sentences[:n]
                 print(f"Match #{i + 1} (first {n} sentences):\n {' '.join(first_n_sentences)}") # print the number of the match
                 # and the specified number of sentences

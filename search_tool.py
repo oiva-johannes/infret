@@ -14,13 +14,16 @@ def search(file_path):
     sparse_matrix = cv.fit_transform(documents) # create sparse matrix to save space
     sparse_td_matrix = sparse_matrix.T.tocsr() # convert the matrix to CSR (ordered by terms) and transpose it, creating an inverted index
     t2i = cv.vocabulary_ # creates a dictionary with terms as keys and term-indices as values
+    print(t2i)
     
     query(sparse_td_matrix, t2i, documents) # run the actual query
 
 def query(sparse_td_matrix, t2i, documents): # make the queries run in a loop
-    query = ""
-    while query != "quit":
+
+    while True:
         query = input("Please type your query in the format 'word operator word', 'quit' exits: ")
+        if query == "quit":
+             break
         print()
         
         query_result(query, sparse_td_matrix, t2i, documents) 

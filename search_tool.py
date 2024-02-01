@@ -1,11 +1,11 @@
 from sklearn.feature_extraction.text import CountVectorizer
 #import web_scraping
 import re
-import np
+import numpy as np
 
 
 def search(file_path):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding='utf-8') as f:
         text = f.read()
     
     documents = text.split("</article>") # split the text by article, create a list
@@ -67,7 +67,7 @@ def query_result(query, sparse_td_matrix, t2i, documents): # get the query resul
 
 def main():
 
-   search("wiki_articles.txt")
+   search("./dynamic-datasets/article_dataset.txt")
    
 if __name__ == "__main__":
     main()

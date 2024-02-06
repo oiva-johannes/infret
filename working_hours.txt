@@ -8,12 +8,12 @@ Emma:
 29.1	6h	Did the search engine task (parts 1, 2, 3 and 5)
 
 Oiva:
-28.1    2h bug fixes; an error appeared when tried to use the scraped dataset, and added an easy quit.
 27.1    6h made the web_scraping.py fetch the article text bodies, and convert & format them to datasets.
+28.1    2h bug fixes; an error appeared when tried to use the scraped dataset, and added an easy quit.
 
 Week 3 tasks:
 
 Oiva
-2.1     1h fixed some bugs related to serach. 
-5.1     5h added new search functionality based on cosine similarity with the sklearn TfidfVectorizer.
+2.2     1h fixed some bugs related to serach. 
+5.2     5h added new search functionality based on cosine similarity with the sklearn TfidfVectorizer.
 

@@ -13,6 +13,12 @@ Oiva:
 
 Week 3 tasks:
 
+Emma
+1.2	1h	Read some of the material of week 3
+4.2	2h	Studied the search tutorials and had a team call
+7.2	6h	Added search options to the tf-idf based search (stemming and exact match), tried to also do the wildcard option,
+		did not succeed yet. Fixed a small bug in a previous part.
+
 Oiva
 2.2     1h fixed some bugs related to serach. 
 5.2     5h added new search functionality based on cosine similarity with the sklearn TfidfVectorizer.

@@ -1,24 +1,20 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
-import re
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import FinnishStemmer
-from scipy.sparse import vstack, hstack
-
+from scipy.sparse import vstack
+import pandas as pd
 
 stemmer = FinnishStemmer() # a stemmer for finnish
 
-def read_data(f_path: str):
 
-    f = open(file=f_path, mode='r', encoding='utf-8')
-    text = f.read()
-    f.close()
-    documents = text.split("</article>")
-    return documents
+def read_data(f_path: str) -> pd.DataFrame:
+
+    df_ex = pd.read_excel(f_path)
+    return df_ex
 
 
-def search_documents(query: str, documents: str):
+def search_documents(query: str, documents: list[str]) -> list[tuple]:
 
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
     query = query.split(" ")
@@ -29,7 +25,7 @@ def search_documents(query: str, documents: str):
 
     for q in query:
 
-        q = q.lower()
+        q = q.lower().strip()
         if q[0] == '"' and q[-1] == '"': # checks if the query has double quotes
             q = q[1:-1] # removes the double quotes from the query
             print(q) # debug
@@ -59,8 +55,8 @@ def search_documents(query: str, documents: str):
         return None
 
 
-def stem_documents(documents): # tokenize all the documents and stem them
-    
+def stem_documents(documents: list[str]) -> list[str]: # tokenize all the documents and stem them
+
     stem_documents = []
     for document in documents:
         words = word_tokenize(document, language='finnish')
@@ -73,23 +69,29 @@ def stem_documents(documents): # tokenize all the documents and stem them
 
 def main():
 
-    documents = read_data('./dynamic-datasets/article_dataset.txt')
+    df_ex = read_data('dynamic-datasets/articles_excel.xlsx')
+    documents = df_ex["text"].tolist()
+    headers = df_ex["header"].tolist()
+    links = df_ex["href"].tolist()
+    dates = df_ex["date"].tolist()
 
     while True:
         query = input('Please type your query, use double quotes for exact match ("quit" exits): ').strip()
         if query == "quit":
              break
-                
+
         ranked = search_documents(query, documents)
 
         if ranked:
-            print(f"\n\nThe search found {len(ranked)} document matches for your query: '{query}', with varying precisions. Here they are ranked in order from best to worst:\n\n")
-    
+            print(f"\nThe search found {len(ranked)} document matches for your query: '{query}', with varying precisions.\nHere they are ranked in order from best to worst:\n")
+
             for i, article in enumerate(ranked):
                 score = article[0]
-                document = documents[article[1]]
-                header = re.findall(r"name.*[0-9]", document)[0]
-                print(f"Match #{i + 1} with the score of {score}:\n{header}\n")
+                header = headers[article[1]]
+                link = links[article[1]]
+                date = dates[article[1]]
+
+                print(f"MATCH #{i + 1} with the score of {score}:\n'{header}'\nON {date} FROM {link}\n")
         else:
             print(f"\n\nThe search did not find any document to match your query: '{query}'\n\n")
 

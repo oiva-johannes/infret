@@ -3,9 +3,8 @@ import requests
 import re
 import pandas as pd
 import os
+import datetime
 
-if os.path.isfile("./dynamic-datasets/article_dataset.txt"):
-    os.remove("./dynamic-datasets/article_dataset.txt")
 if os.path.isfile("./dynamic-datasets/articles_excel.xlsx"):
     os.remove("./dynamic-datasets/articles_excel.xlsx")
 
@@ -33,41 +32,51 @@ def ScrapeYle(articles: list[pd.DataFrame]):
             else:
                 href = href[6:-2]
 
-            print(href) # debug print
+            print(href) # debug print    
+
             source_article = requests.get(href)
             source_article.raise_for_status()
             bsoup = BeautifulSoup(source_article.text, "html.parser")
+
             content = bsoup.find('section', class_="yle__article__content")
-            if content == None or content.text == None or content.text == "" or content.text == []:
-                print(None)  # debug print
+            if content == None or content.text == None or content.text == "" or content.text == [] or content == "":
+                print(None, "skipped")  # debug print
                 continue
-            print(content.text) # debug print
+
+            rege = re.compile('.*yle__article__paragraph')
+            p = bsoup.find(class_=rege)
+            if p == None:
+                paragraph = ""
+            else:
+                paragraph = p.text
+
+            time = bsoup.find('time', class_="aw-lsqctp jPSFYl yle__article__date--published")
+            date = re.findall('datetime.*">', str(time))
+            if len(date) != 0:
+                date = date[0][10:-2]
+            else:
+                date = datetime.datetime.now().strftime('%Y-%m-%d')
+
 
             text = content.text
             popularity = index+1
             provider = "Yle"
             header = headline.text
-            
+            article_id = re.findall("/a/.*", href)[0][3:]
+            article_id = article_id.replace("-", "")
+    
+
             df = pd.DataFrame({
                 "popularity": popularity,
                 "header": header,
                 "href": href,
-                "text": text,
-                "provider": provider}, index=[len(articles)])
+                "date": date,
+                "articleid": article_id,
+                "provider": provider,
+                "paragraph": paragraph,
+                "text": text,}, index=[len(articles)])
             
             articles.append(df)
-            file = open("dynamic-datasets/article_dataset.txt", mode="a", encoding='utf-8')  # append mode
-            file.write(f'<article name="{header}" href="{href}">\n')
-            file.write(text)
-            file.write(f'\n</article>\n')
-            file.close()
-
-            #print(f"{popularity}: {header}, {href}\n")
-            #header_size = re.findall("h[1-6]", str(headline))[0]
-            #news_object.NewsArticle(headline.text, article_link, header_size, news_site['provider'])
-
-    print(len(headlines))  # debug print
-    print(len(already_seen)) # debug print
  
 
 def main():
@@ -75,7 +84,8 @@ def main():
     articles = []
     ScrapeYle(articles)
     df = pd.concat(articles)
-    df.to_excel('dynamic-datasets/articles_excel.xlsx', index=True)
+    df.to_excel('dynamic-datasets/articles_excel.xlsx', index_label="indexdf")
+    #df.to_parquet('dynamic-datasets/articles.parquet')
 
 
 if __name__ == "__main__":

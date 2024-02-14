@@ -8,9 +8,9 @@ import pandas as pd
 stemmer = FinnishStemmer() # a stemmer for finnish
 
 
-def read_data(f_path: str) -> pd.DataFrame:
+def read_data() -> pd.DataFrame:
 
-    df_ex = pd.read_excel(f_path)
+    df_ex = pd.read_excel('dynamic-datasets/articles_excel.xlsx')
     return df_ex
 
 
@@ -52,7 +52,7 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
         return ranked
     
     else:
-        return None
+        return []
 
 
 def stem_documents(documents: list[str]) -> list[str]: # tokenize all the documents and stem them
@@ -69,7 +69,7 @@ def stem_documents(documents: list[str]) -> list[str]: # tokenize all the docume
 
 def main():
 
-    df_ex = read_data('dynamic-datasets/articles_excel.xlsx')
+    df_ex = read_data()
     documents = df_ex["text"].tolist()
     headers = df_ex["header"].tolist()
     links = df_ex["href"].tolist()
@@ -82,7 +82,7 @@ def main():
 
         ranked = search_documents(query, documents)
 
-        if ranked:
+        if len(ranked) != 0:
             print(f"\nThe search found {len(ranked)} document matches for your query: '{query}', with varying precisions.\nHere they are ranked in order from best to worst:\n")
 
             for i, article in enumerate(ranked):

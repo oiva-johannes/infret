@@ -1,0 +1,33 @@
+html, body {
+  height: 100%;
+}
+
+html {
+  display: table;
+  margin: auto;
+}
+
+body {
+  display: table-cell;
+  vertical-align: middle;
+  background-color: rgb(41, 43, 64);
+  color: rgb(223, 220, 212);
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  padding-top: 30px;
+  padding-bottom: 60px;
+}
+
+h1 {
+  color: rgb(249, 246, 238);
+}
+a {
+  color: rgb(223, 220, 212);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

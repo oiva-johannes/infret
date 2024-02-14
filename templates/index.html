@@ -1,1 +1,25 @@
-test
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="static/main.css">
+  <title>Uutiset Nyt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1><a href="/">Uutiset Nyt</a></h1>
+  <form action = "/search" method = "POST">
+    <input type="text" name="query">
+    <input type="submit" value="search">
+  </form>
+  {% for article in articles %}
+    <ul>
+      <div class="parent-container">
+        <li><a href="{{ article['href'] }}">{{ article['header'] }}</a></li>
+      </div>
+    </ul>
+  {% endfor %}
+</body>
+</html>

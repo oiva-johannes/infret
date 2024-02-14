@@ -1,31 +1,26 @@
 from flask import Flask, render_template, request
 import cosine_search
 
+
 #Initialize Flask instance
 app = Flask(__name__)
 
+df = cosine_search.read_data()
+articles = df.to_dict('records')
 
 @app.route('/')
-def hello_world():
-   return "Hello, World!"
+def index():
+    return render_template('index.html', articles=articles)
 
-#Function search() is associated with the address base URL + "/search"
-#@app.route('/search')
-#def search():
+@app.route('/search', methods=['POST'])
+def search():
+    if request.method == 'POST':
+        query = request.form["query"]
+        data = cosine_search.read_data()["text"].tolist()
+        result = cosine_search.search_documents(query, data)
+        result = [r[1] for r in result]
+        result = [articles[r] for r in result]
+        return render_template('index.html', articles=result)
 
-    #Get query from URL variable
-    #query = request.args.get('query')
 
-    #Initialize list of matches
-    #matches = []
 
-    #If query exists (i.e. is not None)
-    #if query:
-        #Look at each entry in the example data
-        #for entry in example_data:
-            #If an entry name contains the query, add the entry to matches
-            #if query.lower() in entry['name'].lower():
-                #matches.append(entry)
-
-    #Render index.html with matches variable
-    #return render_template('index.html', matches=matches)

@@ -16,7 +16,7 @@ def read_data() -> pd.DataFrame:
 
 def search_documents(query: str, documents: list[str]) -> list[tuple]:
 
-    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
+    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(1,2))
     query = query.split(" ")
     print(query)
 
@@ -35,7 +35,7 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             arrays.append(hits)
 
         else: # if the word is not enclosed in double quotes, search for all matches for the stem    
-            stemmed_q = stemmer.stem(q) # stem the query
+            stemmed_q = ' '.join([stemmer.stem(token) for token in q.split()])
             print(stemmed_q) # debug
             sparse_matrix = tfv.fit_transform(stemmed_documents).T.tocsr()
             query_vec = tfv.transform([stemmed_q]).tocsc()

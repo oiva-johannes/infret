@@ -9,7 +9,6 @@ html {
 
 body {
   display: table-cell;
-  vertical-align: middle;
   background-color: rgb(41, 43, 64);
   color: rgb(223, 220, 212);
   font-family: "Montserrat", sans-serif;
@@ -31,3 +30,21 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.article {
+  width: 400px;
+  height: 200px;
+  padding: 30px;
+}
+
+ul {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  list-style-type: none;
+}
+
+li {
+  box-sizing: border-box;
+}
+

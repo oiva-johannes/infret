@@ -14,12 +14,16 @@
     <input type="text" name="query">
     <input type="submit" value="search">
   </form>
-  {% for article in articles %}
-    <ul>
-      <div class="parent-container">
-        <li><a href="{{ article['href'] }}">{{ article['header'] }}</a></li>
-      </div>
-    </ul>
-  {% endfor %}
+  <ul>
+    {% for article in articles %}
+      <li>
+        <div class="article">
+          <h3><a href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
+          <p>{{ article['paragraph'] }}</p>
+          <bold>{{ article['provider'] }} {{ article['date'] }}</bold>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
 </body>
 </html>

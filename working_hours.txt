@@ -28,3 +28,12 @@ Week 4 tasks:
 Emma
 11.2	30 min	Call with the team to go trough code and plan next week.
 14.2	5h	Checked the flask app and code of my team member, implemented search by bigrams, worked on the webscraper for HS
+
+Week 4 tasks:
+
+Emma
+16.2	1,5h	Making plots for the data.
+17.2	3h	Doing plots with NER.
+18.2	1h	Once again, plots.
+19.2	30 min	Call with the team.
+

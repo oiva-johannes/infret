@@ -18,7 +18,7 @@
     {% for article in articles %}
       <li>
         <div class="article">
-          <h3><a href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
+          <h3><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
           <p>{{ article['paragraph'] }}</p>
           <bold>{{ article['provider'] }} {{ article['date'] }}</bold>
         </div>

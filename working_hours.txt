@@ -42,5 +42,9 @@ Emma
 18.2	1h	Once again, plots.
 19.2	30 min	Call with the team.
 
-
+Oiva
+22.2	7h: update the UI,
+			add check for duplicate articles,
+			remove unnecessary data columns,
+			add script for removing old articles.
 

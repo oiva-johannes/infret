@@ -48,3 +48,9 @@ Oiva
 			remove unnecessary data columns,
 			add script for removing old articles.
 
+Week 6 tasks:
+
+Emma
+23.2	1h	Working with lemmatization.
+24.2	1h	Continuing the same.
+25.2	3h	Lemmatization for the search and the NER.

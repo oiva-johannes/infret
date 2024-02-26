@@ -37,12 +37,6 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             print(lemmatized_q) # debug
             sparse_matrix = tfv.fit_transform(lemmatized_documents).T.tocsr()
             query_vec = tfv.transform([lemmatized_q]).tocsc()
-
-        else: # if the word is not enclosed in double quotes, search for all matches for the stem    
-            stemmed_q = stemmer.stem(q)
-            print(stemmed_q) # debug
-            sparse_matrix = tfv.fit_transform(stemmed_documents).T.tocsr()
-            query_vec = tfv.transform([stemmed_q]).tocsc()
             hits = np.dot(query_vec, sparse_matrix)
             arrays.append(hits)
 

@@ -1,11 +1,11 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from nltk.tokenize import word_tokenize
-from nltk.stem.snowball import FinnishStemmer
 from scipy.sparse import vstack
 import pandas as pd
+from libvoikko import Voikko
+v = Voikko("fi")
 
-stemmer = FinnishStemmer() # a stemmer for finnish
 
 
 def read_data() -> pd.DataFrame:
@@ -16,11 +16,11 @@ def read_data() -> pd.DataFrame:
 
 def search_documents(query: str, documents: list[str]) -> list[tuple]:
 
-    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2", ngram_range=(1,2))
+    tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
     query = query.split(" ")
     print(query)
 
-    stemmed_documents = stem_documents(documents) # stem also the documents so the documents and the query match
+    lemmatized_documents = lemmatize_documents(documents) # lemmatize also the documents so the documents and the query match
     arrays = []
 
     for q in query:
@@ -34,11 +34,13 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             hits = np.dot(query_vec, sparse_matrix)
             arrays.append(hits)
 
-        else: # if the word is not enclosed in double quotes, search for all matches for the stem    
-            stemmed_q = ' '.join([stemmer.stem(token) for token in q.split()])
-            print(stemmed_q) # debug
-            sparse_matrix = tfv.fit_transform(stemmed_documents).T.tocsr()
-            query_vec = tfv.transform([stemmed_q]).tocsc()
+        else: # if the word is not enclosed in double quotes, search for all matches for the lemmatized query
+            voikko_dict = v.analyze(q)
+            for q in voikko_dict:
+                lemmatized_q = q.get("BASEFORM") # get the lemmatized query
+            print(lemmatized_q) # debug
+            sparse_matrix = tfv.fit_transform(lemmatized_documents).T.tocsr()
+            query_vec = tfv.transform([lemmatized_q]).tocsc()
             hits = np.dot(query_vec, sparse_matrix)
             arrays.append(hits)
 
@@ -55,16 +57,22 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
         return []
 
 
-def stem_documents(documents: list[str]) -> list[str]: # tokenize all the documents and stem them
-
-    stem_documents = []
+def lemmatize_documents(documents: list[str]) -> list[str]: # tokenize all the documents and lemmatize them
+    
+    lemmatized_documents = []
     for document in documents:
         words = word_tokenize(document, language='finnish')
-        stem_words = [stemmer.stem(word) for word in words]
-        stem_document = ' '.join(stem_words)
-        stem_documents.append(stem_document)
+        lemmatized_words = []
+        for word in words:
+            voikko_dict = v.analyze(word)
+            for word in voikko_dict:
+                lemma = word.get("BASEFORM")
+                lemmatized_words.append(lemma)
     
-    return stem_documents
+        lemmatized_document = ' '.join(lemmatized_words)
+        lemmatized_documents.append(lemmatized_document)
+    
+    return lemmatized_documents
 
 
 def main():

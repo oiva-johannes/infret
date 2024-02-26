@@ -5,13 +5,8 @@ from scipy.sparse import vstack
 import pandas as pd
 from libvoikko import Voikko
 v = Voikko("fi")
+from utils.utils import read_data
 
-
-
-def read_data() -> pd.DataFrame:
-
-    df_ex = pd.read_excel('dynamic-datasets/articles_excel.xlsx')
-    return df_ex
 
 
 def search_documents(query: str, documents: list[str]) -> list[tuple]:
@@ -34,6 +29,7 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             hits = np.dot(query_vec, sparse_matrix)
             arrays.append(hits)
 
+
         else: # if the word is not enclosed in double quotes, search for all matches for the lemmatized query
             voikko_dict = v.analyze(q)
             for q in voikko_dict:
@@ -41,8 +37,15 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             print(lemmatized_q) # debug
             sparse_matrix = tfv.fit_transform(lemmatized_documents).T.tocsr()
             query_vec = tfv.transform([lemmatized_q]).tocsc()
+
+        else: # if the word is not enclosed in double quotes, search for all matches for the stem    
+            stemmed_q = stemmer.stem(q)
+            print(stemmed_q) # debug
+            sparse_matrix = tfv.fit_transform(stemmed_documents).T.tocsr()
+            query_vec = tfv.transform([stemmed_q]).tocsc()
             hits = np.dot(query_vec, sparse_matrix)
             arrays.append(hits)
+
 
     hits = vstack(arrays)
     hits = hits.tocsc()

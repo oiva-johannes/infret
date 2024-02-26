@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
-import pandas as pd
+from utils.utils import read_data, write_data
 
 
-df = pd.read_excel('dynamic-datasets/articles_excel.xlsx')
+df = read_data()
 articles = df.to_dict('records')
 rm = []
-delta = timedelta(weeks=1)
+delta = timedelta(weeks=2)
 dt_current = datetime.now()
 
 for i in range(len(articles)):
@@ -16,5 +16,5 @@ for i in range(len(articles)):
         rm.append(i)
 
 print(rm)
-df.drop(rm,axis=0,inplace=True) # remove news articles that are older than 1 week
-df.to_excel('dynamic-datasets/articles_excel.xlsx', index=False)
+df.drop(rm,axis=0,inplace=True) # remove news articles that are older than 2 weeks
+write_data(df)

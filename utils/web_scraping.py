@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dateutil import parser
+from utils import read_data, write_data
 
 
 def ScrapeYle(articles: list[pd.DataFrame]):
@@ -71,7 +72,7 @@ def ScrapeYle(articles: list[pd.DataFrame]):
 
             text = content.text
             popularity = index+1
-            provider = "Yle"
+            provider = "YLE"
             header = headline.text
 
 
@@ -91,16 +92,16 @@ def main():
 
     articles = []
     try:
-        df_ex = pd.read_excel('dynamic-datasets/articles_excel.xlsx')
+        df_ex = read_data()
         articles.append(df_ex)
-    except:
-        print("no previous articles\n")
+    except Exception as e:
+        print(f"no previous articles: {e}\n")
 
     ScrapeYle(articles)
     df = pd.concat(articles)
 
     sorted_df = df.sort_values(by='popularity')
-    sorted_df.to_excel('dynamic-datasets/articles_excel.xlsx', index=False)
+    write_data(sorted_df)
     #df.to_parquet('dynamic-datasets/articles.parquet')
 
 

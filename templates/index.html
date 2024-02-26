@@ -7,9 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1><a href="/">Uutiset Nyt</a></h1>
+  <h1 class="pagetitle"><a href="/">Uutiset Nyt <span class="noto-color">🌍</span></a></h1>
   <form action = "/search" method = "POST">
     <input type="text" name="query">
     <input type="submit" value="search">
@@ -18,9 +21,9 @@
     {% for article in articles %}
       <li>
         <div class="article">
-          <h3><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
+          <h3 class="provider">{{ article['provider'] }}</h3> <h5 class="provider">{{ article['date'] }}</h5>
+          <h3 class="title"><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
           <p>{{ article['paragraph'] }}</p>
-          <bold>{{ article['provider'] }} {{ article['date'] }}</bold>
         </div>
       </li>
     {% endfor %}

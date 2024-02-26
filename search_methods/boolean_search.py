@@ -2,13 +2,13 @@ from sklearn.feature_extraction.text import CountVectorizer
 #import web_scraping
 import re
 import numpy as np
+from utils.utils import read_data
 
 
 def search(file_path):
-    with open(file_path, "r", encoding='utf-8') as f:
-        text = f.read()
-    
-    documents = text.split("</article>") # split the text by article, create a list
+
+    df_ex = read_data(file_path)
+    documents = df_ex["text"].tolist()
         
     cv = CountVectorizer(lowercase=True, binary=True)
     sparse_matrix = cv.fit_transform(documents) # create sparse matrix to save space
@@ -69,9 +69,7 @@ def query_result(query, sparse_td_matrix, t2i, documents): # get the query resul
 
 def main():
 
-   search("./dynamic-datasets/article_dataset.txt")
+   search("./dynamic-datasets/article_dataset.xlsx")
    
 if __name__ == "__main__":
     main()
-                                     
-    

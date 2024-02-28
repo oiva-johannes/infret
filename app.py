@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request
 from search_methods.cosine_search import search_documents
-from utils.utils import read_data
+from utils.utils import read_data, read_lemmatized_documents
 
 
 #Initialize Flask instance
 app = Flask(__name__)
 
 df = read_data()
+lemmatized = read_lemmatized_documents()
+
 articles = df.to_dict('records')
 data = df["text"].tolist()
 
@@ -20,7 +22,7 @@ def search():
         query = request.form["query"]
         if query.strip() == "":
             return index()
-        result = search_documents(query, data)
+        result = search_documents(query, data, lemmatized)
         result = [r[1] for r in result]
         result = [articles[r] for r in result]
         return render_template('index.html', articles=result)

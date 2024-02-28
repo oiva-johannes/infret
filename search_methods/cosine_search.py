@@ -1,26 +1,27 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
-from nltk.tokenize import word_tokenize
-from scipy.sparse import vstack
-import pandas as pd
+from utils.utils import read_data
+#from nltk.tokenize import word_tokenize
 from libvoikko import Voikko
 v = Voikko("fi")
-from utils.utils import read_data
+
+# if it isn't your first time running this app in you can comment these two out
+#import nltk
+#nltk.download('punkt')
 
 
-
-def search_documents(query: str, documents: list[str]) -> list[tuple]:
+def search_documents(query: str, documents: list[str], lemmatized_documents: list[str]) -> list[tuple]:
 
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
     query = query.split(" ")
     print(query)
+    print(len(lemmatized_documents))
 
-    lemmatized_documents = lemmatize_documents(documents) # lemmatize also the documents so the documents and the query match
     arrays = []
-
     for q in query:
 
         q = q.lower().strip()
+
         if q[0] == '"' and q[-1] == '"': # checks if the query has double quotes
             q = q[1:-1] # removes the double quotes from the query
             print(q) # debug
@@ -29,11 +30,13 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             hits = np.dot(query_vec, sparse_matrix)
             arrays.append(hits)
 
-
         else: # if the word is not enclosed in double quotes, search for all matches for the lemmatized query
             voikko_dict = v.analyze(q)
-            for q in voikko_dict:
-                lemmatized_q = q.get("BASEFORM") # get the lemmatized query
+            if voikko_dict:
+                lemmatized_q = voikko_dict[0]["BASEFORM"]
+            else:
+                lemmatized_q = q
+            # get the lemmatized query
             print(lemmatized_q) # debug
             sparse_matrix = tfv.fit_transform(lemmatized_documents).T.tocsr()
             query_vec = tfv.transform([lemmatized_q]).tocsc()
@@ -41,8 +44,11 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
             arrays.append(hits)
 
 
-    hits = vstack(arrays)
+    hits = arrays[0]
+    for k in range(1, len(arrays)):
+        hits = hits.multiply(arrays[k])
     hits = hits.tocsc()
+    
     if hits.nnz > 0: # check that the number of matches is positive
         ranked = sorted(zip(np.array(hits[hits.nonzero()])[0], hits.nonzero()[1]), reverse=True)
         already_seen = set()
@@ -54,25 +60,9 @@ def search_documents(query: str, documents: list[str]) -> list[tuple]:
         return []
 
 
-def lemmatize_documents(documents: list[str]) -> list[str]: # tokenize all the documents and lemmatize them
-    
-    lemmatized_documents = []
-    for document in documents:
-        words = word_tokenize(document, language='finnish')
-        lemmatized_words = []
-        for word in words:
-            voikko_dict = v.analyze(word)
-            for word in voikko_dict:
-                lemma = word.get("BASEFORM")
-                lemmatized_words.append(lemma)
-    
-        lemmatized_document = ' '.join(lemmatized_words)
-        lemmatized_documents.append(lemmatized_document)
-    
-    return lemmatized_documents
+if __name__ == "__main__":
 
-
-def main():
+    # for testing stuff 
 
     df_ex = read_data()
     documents = df_ex["text"].tolist()
@@ -99,8 +89,3 @@ def main():
                 print(f"MATCH #{i + 1} with the score of {score}:\n'{header}'\nON {date} FROM {link}\n")
         else:
             print(f"\n\nThe search did not find any document to match your query: '{query}'\n\n")
-
-
-if __name__ == "__main__":
-
-    main()

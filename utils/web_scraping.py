@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dateutil import parser
-from utils import read_data, write_data
+from utils import read_data, write_data, lemmatize_documents
 
 
 def ScrapeYle(articles: list[pd.DataFrame]):
@@ -28,7 +28,7 @@ def ScrapeYle(articles: list[pd.DataFrame]):
             
             href = re.findall('href.*\">', str(headline))[0]
             if "https://areena.yle.fi" in href:
-                print(None, "wrong type")
+                print(None, "YLE: wrong type")
                 continue
             
             if "https://yle.fi" not in href:
@@ -37,7 +37,7 @@ def ScrapeYle(articles: list[pd.DataFrame]):
                 href = href[6:-2]
 
             if href in old_links:
-                print(None, "old href")
+                print(None, "YLE: old href")
                 continue
             
             source_article = requests.get(href)
@@ -46,10 +46,10 @@ def ScrapeYle(articles: list[pd.DataFrame]):
 
             content = bsoup.find('section', class_="yle__article__content")
             if content == None or content.text == None or content.text == "" or content.text == [] or content == "":
-                print(None, "content")  # debug print
+                print(None, "YLE: content")  # debug print
                 continue
 
-            print(href) # debug print
+            print("YLE:", href) # debug print
 
             rege = re.compile('.*yle__article__paragraph')
             p = bsoup.find(class_=rege)
@@ -102,6 +102,8 @@ def main():
 
     sorted_df = df.sort_values(by='popularity')
     write_data(sorted_df)
+    documents = sorted_df["text"].tolist()
+    lemmatize_documents(documents)
     #df.to_parquet('dynamic-datasets/articles.parquet')
 
 

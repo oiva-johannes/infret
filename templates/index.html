@@ -13,15 +13,20 @@
 </head>
 <body>
   <h1 class="pagetitle"><a href="/">Uutiset Nyt <span class="noto-color">🌍</span></a></h1>
-  <form action = "/search" method = "POST">
+  <form class="search" action="/search" method="POST">
     <input type="text" name="query">
-    <input type="submit" value="search">
+    <input type="submit" value="Haku">
+  </form>
+  <form action="/sort" method="post" >
+    <input class="button" type="submit" name="sort_button" value="Suositut"/>
+    <input class="button" type="submit" name="sort_button" value="Uudet"/>
+    <input class="button" type="submit" name="sort_button" value="Tilastot"/>
   </form>
   <ul>
     {% for article in articles %}
       <li>
-        <div class="article">
-          <h3 class="provider">{{ article['provider'] }}</h3> <h5 class="provider">{{ article['date'] }}</h5>
+        <div class="article">          
+          <h3 class="provider-{{ article['provider'] }}">{{ article['provider'] }}</h3> <h5 class="provider">{{ article['date'] }}</h5>
           <h3 class="title"><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
           <p>{{ article['paragraph'] }}</p>
         </div>

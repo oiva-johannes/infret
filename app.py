@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from search_methods.cosine_search import search_documents
 from utils.utils import read_data, read_lemmatized_documents
+import pandas as pd
 
 
 #Initialize Flask instance
@@ -45,7 +46,10 @@ def sort():
             return index()
         
         elif request.form['sort_button'] == 'Uudet':
-            sorted_df = df.sort_values(by='date', ascending=False) 
+            new_df = df.copy()
+            new_df['date'] = pd.to_datetime(new_df['date'], format='%d.%m.%Y')
+            sorted_df = new_df.sort_values(by='date', ascending=False) 
+            sorted_df['date'] = sorted_df['date'].dt.strftime('%d.%m.%Y')
             sort_date = sorted_df.to_dict('records')
             return render_template('index.html', articles=sort_date)
         

@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dateutil import parser
-from utils import read_data, write_data, lemmatize_documents
+from utils.utils import read_data, write_data, lemmatize_documents
 
 
 def ScrapeYle(articles: list[pd.DataFrame]):
@@ -86,7 +86,7 @@ def ScrapeYle(articles: list[pd.DataFrame]):
                 "text": text,}, index=[len(articles)+1])
             
             articles.append(df)
- 
+
 
 def main():
 

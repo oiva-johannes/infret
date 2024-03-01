@@ -60,6 +60,7 @@ def lemmatize_documents(documents: list[str], file: str = "dynamic_datasets/lemm
         if testi: 
             print("lemmatized_documents:", lemmatized_documents)
             testi = False
+
     print(len(lemmatized_documents))
     f = open(file, 'w', newline='')
     wr = csv.writer(f, delimiter=';')
@@ -70,5 +71,4 @@ def lemmatize_documents(documents: list[str], file: str = "dynamic_datasets/lemm
 if __name__=="__main__":
 
     lemmatized = read_lemmatized_documents()
-    print(lemmatized)
     print(len(lemmatized))

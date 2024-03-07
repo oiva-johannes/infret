@@ -95,7 +95,7 @@ a:hover {
 
 .article {
   width: 500px;
-  height: 290px;
+  height: 200px;  /* 290*/
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 10px;
@@ -119,6 +119,14 @@ a:hover {
   margin-right: 560px;
   display: inline !important;
   color: rgb(0,180,200);
+}
+
+.provider-IS {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 560px;
+  display: inline !important;
+  color: rgb(169, 35, 32);
 }
 
 .pagetitle {

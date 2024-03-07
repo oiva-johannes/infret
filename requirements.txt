@@ -107,6 +107,7 @@ rfc3986-validator==0.1.1
 rpds-py==0.17.1
 scikit-learn==1.4.0
 scipy==1.12.0
+selenium==4.18.1
 Send2Trash==1.8.2
 six==1.16.0
 smart-open==6.4.0

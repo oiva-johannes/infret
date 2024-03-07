@@ -13,8 +13,11 @@ v = Voikko("fi")
 def search_documents(query: str, documents: list[str], lemmatized_documents: list[str]) -> list[tuple]:
 
     tfv = TfidfVectorizer(lowercase=True, sublinear_tf=True, use_idf=True, norm="l2")
-    query = query.split(" ")
-    print(query)
+    query = query.strip()
+    if query.count('"') != 2:
+        query = query.split(" ")
+    else:
+        query = [query]
     print(len(lemmatized_documents))
 
     arrays = []
@@ -22,9 +25,11 @@ def search_documents(query: str, documents: list[str], lemmatized_documents: lis
 
         q = q.lower().strip()
 
+        print("ongelma")
+        print(q)
         if q[0] == '"' and q[-1] == '"': # checks if the query has double quotes
             q = q[1:-1] # removes the double quotes from the query
-            print(q) # debug
+            print("exact:", q) # debug
             sparse_matrix = tfv.fit_transform(documents).T.tocsr()
             query_vec = tfv.transform([q]).tocsc()
             hits = np.dot(query_vec, sparse_matrix)
@@ -37,7 +42,7 @@ def search_documents(query: str, documents: list[str], lemmatized_documents: lis
             else:
                 lemmatized_q = q
             # get the lemmatized query
-            print(lemmatized_q) # debug
+            print("lemmatized:", lemmatized_q) # debug
             sparse_matrix = tfv.fit_transform(lemmatized_documents).T.tocsr()
             query_vec = tfv.transform([lemmatized_q]).tocsc()
             hits = np.dot(query_vec, sparse_matrix)

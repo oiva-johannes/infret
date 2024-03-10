@@ -23,32 +23,38 @@ def get_entities(documents: list, label: str):
 def plot_entities_gpe(entity_freq, n):
     most_common_entities = entity_freq.most_common(n) # get the most common entities with their frequencies
     entities, frequencies = zip(*most_common_entities) # unpack the list and group entities and frequencies to their own variables
+
+    fig, ax = plt.subplots(figsize=(8, 9))  # create a figure and axis object
+    ax.set_facecolor('#292b2c')  # set the background color of the axis to black
+    fig.set_facecolor('#292b2c')  
+
+    plt.bar(entities, frequencies)    
+    plt.title('Yleisimmin esiintyvät geopoliittiset entiteetit Ylen uutisissa', color='#dfdcd4') # add a title   
+    plt.xlabel('Geopoliittiset entiteetit', color='#dfdcd4') # name the x-axis   
+    plt.ylabel('Frekvenssi', color='#dfdcd4') # name of the y-axis
     
-    plt.figure(facecolor='black') 
-    plt.bar(entities, frequencies)
-    
-    plt.title('Yleisimmin esiintyvät geopoliittiset entiteetit Ylen uutisissa', color='white') # add a title   
-    plt.xlabel('Geopoliittiset entiteetit', color='white') # name the x-axis   
-    plt.ylabel('Frekvenssi', color='white') # name of the y-axis
-    
-    plt.tick_params(axis='x', colors='white')
-    plt.tick_params(axis='y', colors='white')
+    plt.tick_params(axis='x', colors='#dfdcd4')
+    plt.tick_params(axis='y', colors='#dfdcd4')
     plt.xticks(rotation=45)
     plt.show()
     
 def plot_entities_person(entity_freq, n):
-    most_common_entities = entity_freq.most_common(n) # get the most common entities with their frequencies
-    entities, frequencies = zip(*most_common_entities) # unpack the list and group entities and frequencies to their own variables
-    
-    plt.figure(figsize=(8,9), facecolor='black') 
-    plt.bar(entities, frequencies)
-    plt.title('Yleisimmin esiintyvät henkilöt Ylen uutisissa', color='white') # add a title   
-    plt.xlabel('Henkilöt', color='white') # name the x-axis   
-    plt.ylabel('Frekvenssi', color='white') # name of the y-axis
-    
-    plt.tick_params(axis='x', colors='white')
-    plt.tick_params(axis='y', colors='white')
+    most_common_entities = entity_freq.most_common(n)  # get the most common entities with their frequencies
+    entities, frequencies = zip(*most_common_entities)  # unpack the list and group entities and frequencies to their own variables
+
+    fig, ax = plt.subplots(figsize=(8, 9))  # create a figure and axis object
+    ax.set_facecolor('#292b2c')  # set the background color of the axis to black
+    fig.set_facecolor('#292b2c')  
+
+    ax.bar(entities, frequencies)
+    ax.set_title('Yleisimmin esiintyvät henkilöt Ylen uutisissa', color='#dfdcd4')  # add a title
+    ax.set_xlabel('Henkilöt', color='#dfdcd4')  # name the x-axis
+    ax.set_ylabel('Frekvenssi', color='#dfdcd4')  # name of the y-axis
+
+    ax.tick_params(axis='x', colors='#dfdcd4')
+    ax.tick_params(axis='y', colors='#dfdcd4')
     plt.xticks(rotation=45)
+    plt.tight_layout()  # adjust the layout to prevent overlapping
     plt.show()
     
 def main():

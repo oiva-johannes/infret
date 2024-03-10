@@ -31,16 +31,11 @@ def read_lemmatized_documents(file: str = 'dynamic_datasets/lemmatized.csv') -> 
 
 
 def lemmatize_documents(documents: list[str], file: str = "dynamic_datasets/lemmatized.csv"):
-    testi = True
 
     lemmatized_documents = []
     for document in documents:
         document = document.lower().strip().replace(".", " ").replace(",", " ").replace(":", " ").replace(";", " ").replace("/", " ")
-        if testi:
-            print("document:", document)
         words = word_tokenize(document, language='finnish')
-        if testi:
-            print("words:", words)
         lemmatized_words = []
         for word in words:
             word = word.strip()
@@ -51,15 +46,9 @@ def lemmatize_documents(documents: list[str], file: str = "dynamic_datasets/lemm
                 bf_word = word
             lemmatized_words.append(bf_word)
 
-        if testi:
-            print("lemmatized_words:", lemmatized_words)
         lemmatized_document = ' '.join(lemmatized_words)
-        if testi:
-            print("lemmatized_document:", lemmatized_document)
         lemmatized_documents.append(lemmatized_document)
-        if testi: 
-            print("lemmatized_documents:", lemmatized_documents)
-            testi = False
+
 
     print(len(lemmatized_documents))
     f = open(file, 'w', newline='')

@@ -48,7 +48,7 @@ Now you can run the Flask app:
 
 `flask run`
 
-## If you want to run or schedule the web scraper you will need the Selenium webdriver (because of the dynamic Javascript sites).
+## If you want to run or schedule the web scraper you will need the Selenium webdriver (because of the nature of dynamic Javascript sites).
 The Selenium webdriver requires `chrome-linux64` and `chromedriver` binaries and you can install them with Wget. 
 First check that you Wget installed:
 
@@ -57,7 +57,9 @@ First check that you Wget installed:
 And then install `chrome-linux64` and `chromedriver` with:
 
 ` wget https://storage.googleapis.com/chrome-for-testing-public/114.0.5735.90/linux64/chrome-linux64.zip`
+
 `wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip`
+
 Unzip both of these to the main directory (same where app.py resides).
 
 Now you should be able to run the web scraper from the main directory with:

@@ -3,6 +3,7 @@
 
 ![Screenshot from 2024-03-10 22-22-26](https://github.com/oiva-johannes/infret/assets/72695556/56556af4-fc37-4384-9eab-38d56155bbbc)
 
+
 ## Instructions for running the `app.py` on Ubuntu based systems
 
 Clone the repository to your computer.
@@ -52,6 +53,7 @@ Now also install the spacy model for Finnish:
 Now you can run the Flask app:
 
 `flask run`
+
 
 ## If you want to run or schedule the web scraper you will need the Selenium webdriver (because of the nature of dynamic Javascript sites).
 The Selenium webdriver requires `chrome-linux64` and `chromedriver` binaries and you can install them with Wget. 

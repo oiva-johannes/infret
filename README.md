@@ -1,5 +1,5 @@
 # infret
-Search engine for Yle, Ilta-Sanomat and Helsingin Sanomat articles.
+Search engine, recommendation system and an aggregator for Finnish news articles from Yle, Ilta-Sanomat and Helsingin Sanomat.
 
 ## Instructions for users of Ubuntu.
 

@@ -1,7 +1,7 @@
-# infret
+# InfRet
 ### Search engine, recommendation system and an aggregator for Finnish news articles from Yle, Ilta-Sanomat and Helsingin Sanomat.
 
-## Instructions for users of Ubuntu.
+## Instructions for running on Ubuntu based system
 
 Clone the repository to your own computer.
 

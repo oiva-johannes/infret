@@ -1,7 +1,7 @@
 # InfRet
 ### Search engine, recommendation system and an aggregator for Finnish news articles from Yle, Ilta-Sanomat and Helsingin Sanomat.
 
-## Instructions for running the `app.py` on Ubuntu based system
+## Instructions for running the `app.py` on Ubuntu based systems
 
 Clone the repository to your computer.
 
@@ -37,10 +37,10 @@ create `/etc/voikko` with:
 
 `mkdir /etc/voikko`
 
-Then unzip the `dict.zip` in the `/etc/voikko`
+Then unzip the `dict.zip` to the `/etc/voikko`.
 More info on Python with Voikko can be found here https://voikko.puimula.org/python.html
 
-Now install also the spacy model for finnish:
+Now also install the spacy model for Finnish:
 
 `python3 -m spacy download fi_core_news_sm`
 
@@ -51,13 +51,19 @@ Now you can run the Flask app:
 ## If you want to run or schedule the web scraper you will need the Selenium webdriver (because of the dynamic Javascript sites).
 The Selenium webdriver requires `chrome-linux64` and `chromedriver` binaries and you can install them with Wget. 
 First check that you Wget installed:
+
 `sudo apt install wget`
+
 And then install `chrome-linux64` and `chromedriver` with:
+
 ` wget https://storage.googleapis.com/chrome-for-testing-public/114.0.5735.90/linux64/chrome-linux64.zip`
 `wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip`
 Unzip both of these to the main directory (same where app.py resides).
+
 Now you should be able to run the web scraper from the main directory with:
+
 `python -m utils.web_scraping`
+
 If error arises you might need to hunt for some missing requirements for the chromedriver/chrome.
 
 

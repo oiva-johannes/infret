@@ -54,3 +54,5 @@ Emma
 23.2	1h	Working with lemmatization.
 24.2	1h	Continuing the same.
 25.2	3h	Lemmatization for the search and the NER.
+
+Oiva	30h	Many different things on many different days. Commits try to describe what I was working on or what I did.

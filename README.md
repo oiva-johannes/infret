@@ -35,9 +35,11 @@ https://www.puimula.org/htp/testing/voikko-snapshot-v5/
 
 create `/etc/voikko` with:
 
-`mkdir /etc/voikko`
+`sudo mkdir /etc/voikko`
 
-Then unzip the `dict.zip` to the `/etc/voikko`.
+Then unzip the `dict.zip` to the `/etc/voikko`:
+
+`sudo unzip /etc/voikko/dict.zip`
 
 More info on Python with Voikko can be found here https://voikko.puimula.org/python.html
 
@@ -58,7 +60,7 @@ First check that you Wget installed:
 
 And then install `chrome-linux64` and `chromedriver` with:
 
-` wget https://storage.googleapis.com/chrome-for-testing-public/114.0.5735.90/linux64/chrome-linux64.zip`
+`wget https://storage.googleapis.com/chrome-for-testing-public/114.0.5735.90/linux64/chrome-linux64.zip`
 
 `wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip`
 

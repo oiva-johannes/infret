@@ -38,6 +38,7 @@ create `/etc/voikko` with:
 `mkdir /etc/voikko`
 
 Then unzip the `dict.zip` to the `/etc/voikko`.
+
 More info on Python with Voikko can be found here https://voikko.puimula.org/python.html
 
 Now also install the spacy model for Finnish:
@@ -50,6 +51,7 @@ Now you can run the Flask app:
 
 ## If you want to run or schedule the web scraper you will need the Selenium webdriver (because of the nature of dynamic Javascript sites).
 The Selenium webdriver requires `chrome-linux64` and `chromedriver` binaries and you can install them with Wget. 
+
 First check that you Wget installed:
 
 `sudo apt install wget`

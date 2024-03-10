@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 
 ## Setup chrome options
 chrome_options = Options()
-#chrome_options.add_argument("--headless") # Ensure GUI is off
+chrome_options.add_argument("--headless") # Ensure GUI is off
 chrome_options.add_argument("--no-sandbox")
 
 # Set path to chrome/chromedriver as per your configuration
@@ -125,9 +125,10 @@ def ScrapeIS(articles: list[pd.DataFrame]):
     driver.switch_to.frame(iframe)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[@title="OK"]'))).click()
 
-    time.sleep(15)  # Adjust sleep time as necessary
+    print("Waiting for few seconds...")
+    time.sleep(10)  # Adjust sleep time as necessary
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(15)
+    time.sleep(10)
 
     # Now that the page is loaded, including dynamic content, get the page source
     html = driver.page_source
@@ -227,10 +228,10 @@ def ScrapeHS(articles: list[pd.DataFrame]):
     driver.switch_to.frame(iframe)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[@title="OK"]'))).click()
 
-
-    time.sleep(15)  # Adjust sleep time as necessary
+    print("Waiting for few seconds...")
+    time.sleep(10)  # Adjust sleep time as necessary
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(15)
+    time.sleep(10)
 
     # Now that the page is loaded, including dynamic content, get the page source
     html = driver.page_source

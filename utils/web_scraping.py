@@ -136,7 +136,6 @@ def ScrapeIS(articles: list[pd.DataFrame]):
     # Parse the content with BeautifulSoup
     soup = BeautifulSoup(html, 'html.parser')
 
-    #https://www.is.fi/
     # Now you can use BeautifulSoup as before to parse the page
     section = soup.find('section', class_="w-full max-w-main lg:w-main")
     headlines = section.find_all('a', class_='block')
@@ -154,7 +153,7 @@ def ScrapeIS(articles: list[pd.DataFrame]):
         if "http" in href_ending or "mainos" in href_ending:
             print(None, "IS: wrong type")
             continue
-        href = "https://www.is.fi/"+href_ending
+        href = "https://www.is.fi"+href_ending
 
         if href in old_links:
             print(None, "IS: old href")
@@ -212,6 +211,110 @@ def ScrapeIS(articles: list[pd.DataFrame]):
         articles.append(df)
 
 
+def ScrapeHS(articles: list[pd.DataFrame]):
+
+    old_links = []
+    if articles:
+        old_links = articles[0].to_dict('list')['href']
+
+    # Get page
+    # Choose Chrome driver
+    driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+    driver.get("https://www.hs.fi")
+    # Extract description from page and print
+
+    iframe = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "sp_message_iframe_1054505")))
+    driver.switch_to.frame(iframe)
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[@title="OK"]'))).click()
+
+
+    time.sleep(15)  # Adjust sleep time as necessary
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(15)
+
+    # Now that the page is loaded, including dynamic content, get the page source
+    html = driver.page_source
+    driver.quit()
+
+    # Parse the content with BeautifulSoup
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # Now you can use BeautifulSoup as before to parse the page
+    section = soup.find('section', class_="flex justify-start sm:justify-center lg:justify-start")
+    headlines = section.find_all('a', href=True)
+
+    already_seen = set()
+
+    for index, headline in enumerate(headlines):
+        if headline.text not in already_seen:
+            already_seen.add(headline.text)
+        else:
+            print(None, "HS: seen already")
+            continue
+
+        href_ending = headline.get('href')
+        
+        if "http" in href_ending or "mainos" in href_ending or "html" not in href_ending:
+            print(None, "HS: wrong type")
+            continue
+        href = "https://www.hs.fi"+href_ending
+
+        if href in old_links:
+            print(None, "HS: old href")
+            continue
+        
+        source_article = requests.get(href)
+        source_article.raise_for_status()
+        bsoup = BeautifulSoup(source_article.text, "html.parser")
+
+        rege1 = re.compile('.*ab-test-article-body*.')
+        content = bsoup.find('section', class_=rege1)
+        if content == None or content.text == None or content.text == "" or content.text == [] or content == "":
+            print(None, "HS: content")
+            continue
+        text = content.text
+        
+        heading = bsoup.find('h1')
+        if heading.text == None:
+            print(None, "HS: heading")
+            continue
+        header = heading.text
+
+        print("HS:", href) # debug print
+
+        rege2 = re.compile('.*ab-test-ingress*.')
+        p = bsoup.find('p', class_=rege2)
+        if p == None:
+            paragraph = ""
+        else:
+            paragraph = p.text
+
+        time_utc = bsoup.find('time', itemprop="datePublished")
+        date = time_utc.get('datetime')
+        if date:
+            dt_object = parser.parse(date)
+            fin_zone = dt_object.astimezone(ZoneInfo("Europe/Helsinki"))
+            date = fin_zone.strftime('%d.%m.%Y')
+        else:
+            fin_zone = datetime.now(ZoneInfo("Europe/Helsinki"))
+            date = fin_zone.strftime('%d.%m.%Y')
+
+        popularity = index+1
+        provider = "HS"
+
+
+        df = pd.DataFrame({
+                    "popularity": popularity,
+                    "header": header,
+                    "href": href,
+                    "date": date,
+                    "provider": provider,
+                    "paragraph": paragraph,
+                    "text": text,}, index=[len(articles)+1])
+        
+        articles.append(df)
+
+
 def main():
 
     articles = []
@@ -220,9 +323,10 @@ def main():
         articles.append(df_ex)
     except Exception as e:
         print(f"no previous articles: {e}\n")
-
+    
     ScrapeYle(articles)
     ScrapeIS(articles)
+    ScrapeHS(articles)
     df = pd.concat(articles)
 
     sorted_df = df.sort_values(by='popularity')

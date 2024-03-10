@@ -16,11 +16,12 @@ Activate the enviroment:
 `source demoenv/bin/activate`
 
 Install the dependencies/requirements:
+
 `pip3 install -r requirements.txt`
 
 Next we need to install the Finnish language library called Voikko (https://voikko.puimula.org/).
 
-Instructions to install and use Voikko with Ubuntu+Python:
+Instructions to install and use Voikko with Ubuntu+Python are
 
 Install the native library with apt:
 
@@ -29,9 +30,13 @@ Install the native library with apt:
 Install dictionary files:
 
 Choose the first standard dictionary for Finnish named `dict.zip` from the link:
+
 https://www.puimula.org/htp/testing/voikko-snapshot-v5/
+
 create `/etc/voikko` with:
+
 `mkdir /etc/voikko`
+
 Then unzip the `dict.zip` in the `/etc/voikko`
 More info on Python with Voikko can be found here https://voikko.puimula.org/python.html
 

@@ -7,21 +7,29 @@ import pandas as pd
 #Initialize Flask instance
 app = Flask(__name__)
 
-df = read_data()
-lemmatized = read_lemmatized_documents()
-
-articles = df.to_dict('records')
-data = df["text"].tolist()
-
 
 @app.route('/')
 def index():
 
-    return render_template('index.html', articles=articles)
+    global df, lemmatized, state, articles
+    df = read_data()
+    lemmatized = read_lemmatized_documents()
+    state = "popular-top"
+    articles = df.to_dict('records')
+
+    return render_template('index.html', articles=articles, state=state)
 
 
 @app.route('/search', methods=['POST', 'GET'])
 def search():
+
+    global df, lemmatized, state, articles
+    df = read_data()
+    lemmatized = read_lemmatized_documents()
+    articles = df.to_dict('records')
+
+    data = df["text"].tolist()
+    state = "search"
 
     if request.method == 'POST':
         query = request.form["query"]
@@ -31,7 +39,7 @@ def search():
         result = search_documents(query, data, lemmatized)
         result = [r[1] for r in result]
         result = [articles[r] for r in result]
-        return render_template('index.html', articles=result)
+        return render_template('index.html', articles=result, state=state)
     
     elif request.method == 'GET':
         return index()
@@ -40,21 +48,45 @@ def search():
 @app.route('/sort', methods=['POST', 'GET'])
 def sort():
 
-    if request.method == 'POST':
+    global df, lemmatized, state, articles
 
-        if request.form['sort_button'] == 'Suositut':
-            return index()
-        
-        elif request.form['sort_button'] == 'Uudet':
-            new_df = df.copy()
-            new_df['date'] = pd.to_datetime(new_df['date'], format='%d.%m.%Y')
-            sorted_df = new_df.sort_values(by='date', ascending=False) 
-            sorted_df['date'] = sorted_df['date'].dt.strftime('%d.%m.%Y')
-            sort_date = sorted_df.to_dict('records')
-            return render_template('index.html', articles=sort_date)
-        
-        elif request.form['sort_button'] == 'Tilastot':
-            return render_template('stats.html')
+    if request.method == 'POST':
+        print(state)
+        print(request.form)
+        if "Suositut" in request.form['sort_button']:
+            if state == "popular-top":
+                state = "popular-bot"
+                new_df_popu = df.copy()
+                sorted_popu_list = new_df_popu.sort_values(by='popularity', ascending=False)
+                sort_popu_dict = sorted_popu_list.to_dict('records')
+                return render_template('index.html', articles=sort_popu_dict, state=state)
+            else:
+                state = "popular-top"
+                return render_template('index.html', articles=articles, state=state)
+
+        elif "Uudet" in request.form['sort_button']:
+            new_df_date = df.copy()
+            new_df_date['date'] = pd.to_datetime(new_df_date['date'], format='%d.%m.%Y')
+            if state == "newest-top":
+                state = "newest-bot"
+                sorted_date_list = new_df_date.sort_values(by='date', ascending=True) 
+                sorted_date_list['date'] = sorted_date_list['date'].dt.strftime('%d.%m.%Y')
+                sorted_date_dict = sorted_date_list.to_dict('records')
+                return render_template('index.html', articles=sorted_date_dict, state=state)
+            else:
+                state = "newest-top"
+                sorted_date_list = new_df_date.sort_values(by='date', ascending=False) 
+                sorted_date_list['date'] = sorted_date_list['date'].dt.strftime('%d.%m.%Y')
+                sorted_date_dict = sorted_date_list.to_dict('records')
+                return render_template('index.html', articles=sorted_date_dict, state=state)
+
+        elif "Tietoa" in request.form['sort_button']:
+            if state == "info-top":
+                state = "info-down"
+                return render_template('info.html', state=state)
+            else:
+                state = "info-top"
+                return render_template('info.html', state=state)
     
     elif request.method == 'GET':
         return index()

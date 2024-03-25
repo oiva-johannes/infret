@@ -14,21 +14,55 @@
 <body>
   <h1 class="pagetitle"><a href="/">Uutiset Nyt <span class="noto-color">🌍</span></a></h1>
   <form class="search" action="/search" method="POST">
-    <input type="text" name="query">
-    <input type="submit" value="Haku">
+    <input class="search-size" type="text" name="query">
+    <input class="search-button-size" type="submit" value="🔍">
+    <select class="method-size" name="search_method">
+      <option value="method1">Method 1</option>
+      <option value="method2">Method 2</option>
+      <option value="method3">Method 3</option>
+    </select>
   </form>
   <form action="/sort" method="post" >
-    <input class="button" type="submit" name="sort_button" value="Suositut"/>
-    <input class="button" type="submit" name="sort_button" value="Uudet"/>
-    <input class="button" type="submit" name="sort_button" value="Tilastot"/>
+    {% if state == "popular-top" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut 🔽"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "popular-bot" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut 🔼"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "newest-top" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet 🔽"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "newest-bot" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet 🔼"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "info-top" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa 🔽"/>
+    {% elif state == "info-down" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa 🔼"/>
+    {% endif %}
   </form>
   <ul>
     {% for article in articles %}
       <li>
         <div class="article">          
-          <h3 class="provider-{{ article['provider'] }}">{{ article['provider'] }}</h3> <h5 class="provider">{{ article['date'] }}</h5>
-          <h3 class="title"><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
-          <p>{{ article['paragraph'] }}</p>
+          <div><h3 class="provider-{{ article['provider'] }}">{{ article['provider'] }}</h3> <h5 class="atime">{{ article['date'] }}</h5></div>
+          {% if article['header']|length > 90 %}
+            <h4 class="title"><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h4>
+          {% else %}
+            <h3 class="title"><a target="_blank" rel="noopener noreferrer" href="{{ article['href'] }}">{{ article['header'] }}</a></h3>
+          {% endif %}
+          <div class="container">
+            <p>{{ article['paragraph'] }}</p>
+            <img src="static/somefuture.png" alt="Uutis kuva">
+          </div>
         </div>
       </li>
     {% endfor %}

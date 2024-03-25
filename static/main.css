@@ -31,8 +31,8 @@ body {
 
 .search {
   margin:auto;
-  width: 300px;
-  height: 44px;
+  width: 345px;
+  height: 40px;
   border-radius: 15px;
   display: flex;
   flex-direction: row;
@@ -40,6 +40,29 @@ body {
   background-color: rgb(41, 43, 44);
   border: 2px solid rgb(223, 220, 212);
   margin-bottom: 20px;
+  font-size: 1.15em;
+}
+
+.info {
+
+}
+
+.search-size {
+  width: 200px;
+}
+
+.search-button-size {
+  width: 40px;
+  font-size: 1.5em;
+}
+
+.method-size {
+  width: 100px;
+  background-color: rgb(41, 43, 44);
+  color: rgb(223, 220, 212);
+  font-size: 0.8em;
+  border: 2px solid rgb(223, 220, 212);
+  border-radius: 15px;
 }
 
 .buttons {
@@ -49,16 +72,24 @@ body {
   margin:auto;
 }
 
-.button {
-  width: 90px;
-  height: 35px;
+.button{
+  width: 105px;
+  height: 40px;
   background-color: rgb(41, 43, 44);
   border: 2px solid rgb(223, 220, 212);
   border-radius: 15px;
   padding: 0px;
   margin-left: 3px;
   margin-right: 3px;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
+  font-family: "Noto Color Emoji", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.15em; 
+}
+
+.button:hover {
+  text-decoration: underline;
 }
 
 input {
@@ -89,53 +120,66 @@ a:hover {
 }
 
 .title {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 5px;
 }
 
 .article {
   width: 500px;
-  height: 200px;  /* 290*/
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  padding: 15px;
+  height: 205px;  /* 255*/
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding: 10px;
   background-color: rgb(41, 43, 44);
   border: 2px solid rgb(223, 220, 212);
   border-radius: 15px;
 }
 
-.provider {
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.atime {
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-right: 560px;
-  display: inline !important;
+  margin-right: 0px;
+  display: inline-block !important;
 }
 
 .provider-YLE {
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-right: 560px;
-  display: inline !important;
+  margin-right: 10px;
+  display: inline-block !important;
   color: rgb(0,180,200);
+  
 }
 
 .provider-IS {
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-right: 560px;
-  display: inline !important;
+  margin-right: 10px;
+  display: inline-block !important;
   color: rgb(195, 40, 37);
 }
 
 .provider-HS {
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-right: 560px;
-  display: inline !important;
+  margin-right: 10px;
+  display: inline-block !important;
   color: rgb(0, 87, 202);
 }
+
+.article > div:first-child {
+  display: flex;
+  align-items: center;
+}
+
 
 .pagetitle {
   -webkit-text-stroke: 1px rgb(249, 246, 238);
@@ -154,11 +198,11 @@ li {
   box-sizing: border-box;
 }
 
-h4, h5 {
-  display: inline !important;
+.article p {
+  flex: 1;
 }
 
 p {
-  margin-bottom: 10px;
-  margin-top: 10px;
+  margin: 0px;
 }
+

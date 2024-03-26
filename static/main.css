@@ -29,6 +29,13 @@ body {
 	background-attachment: fixed;
 }
 
+input:autofill {
+  color: rgb(223, 220, 212) !important;
+  background: rgb(41, 43, 44);
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: white !important;
+}
+
 .search {
   margin:auto;
   width: 345px;
@@ -62,7 +69,11 @@ body {
   color: rgb(223, 220, 212);
   font-size: 0.8em;
   border: 2px solid rgb(223, 220, 212);
-  border-radius: 15px;
+  border-radius: 5px;
+}
+
+.search-button-size:hover {
+  text-decoration: underline;
 }
 
 .buttons {

@@ -30,9 +30,11 @@ et-xmlfile==1.1.0
 exceptiongroup==1.2.0
 executing==2.0.1
 fastjsonschema==2.19.1
+fi-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/fi_core_news_sm-3.7.0/fi_core_news_sm-3.7.0-py3-none-any.whl
 Flask==3.0.2
 fonttools==4.49.0
 fqdn==1.5.1
+gensim==4.3.2
 h11==0.14.0
 idna==3.6
 ipykernel==6.29.0

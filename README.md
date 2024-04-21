@@ -2,7 +2,8 @@
 
 ### Search engine, recommendation system and aggregator for Finnish news articles from Yle, Ilta-Sanomat and Helsingin Sanomat.
 
-![Screenshot from 2024-03-10 22-22-26](https://github.com/oiva-johannes/infret/assets/72695556/56556af4-fc37-4384-9eab-38d56155bbbc)
+![image](https://github.com/oiva-johannes/infret/assets/72695556/52ca3086-e714-476b-ab15-e527aeaf314a)
+
 
 ## Instructions for running the `app.py` on Ubuntu based systems
 

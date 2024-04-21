@@ -1,0 +1,53 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="static/main.css">
+  <title>Uutiset Nyt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1 class="pagetitle"><a href="/">Uutiset Nyt <span class="noto-color">🌍</span></a></h1>
+  <form class="search" action="/search" method="POST">
+    <input type="text" name="query">
+    <input type="submit" value="Haku">
+  </form>
+  <form action="/sort" method="post" >
+    {% if state == "popular-top" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut 🔽"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "popular-bot" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut 🔼"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "newest-top" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet 🔽"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "newest-bot" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet 🔼"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa ↕"/>
+    {% elif state == "info-top" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa 🔽"/>
+    {% elif state == "info-down" %}
+      <input class="button" type="submit" name="sort_button" value="Suositut ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Uudet ↕"/>
+      <input class="button" type="submit" name="sort_button" value="Tietoa 🔼"/>
+    {% endif %}
+  </form>
+  {% if state == "info-top" %}
+    <img src="static/ner_plot_gpe.png" alt="Tietoa">
+  {% else %}
+    <img src="static/ner_plot_person.png" alt="Tietoa">
+  {% endif %}
+</body>
+</html>

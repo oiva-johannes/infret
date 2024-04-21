@@ -5,7 +5,7 @@ def filter_dates():
     df = read_data()
     articles = df.to_dict('records')
     rm = []
-    delta = timedelta(weeks=2)
+    delta = timedelta(weeks=30)
     dt_current = datetime.now()
 
     for i in range(len(articles)):

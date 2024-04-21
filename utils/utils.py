@@ -14,6 +14,11 @@ def read_data(file: str = 'dynamic_datasets/articles_excel.xlsx') -> pd.DataFram
     df_ex = pd.read_excel(file)
     return df_ex
 
+def read_articles_only() -> list:
+    df = read_data()
+    data = df["text"].tolist()
+    return data
+
 
 def write_data(df, file: str = 'dynamic_datasets/articles_excel.xlsx'):
 

@@ -17,9 +17,15 @@
     <input class="search-size" type="text" name="query">
     <input class="search-button-size" type="submit" value="🔍">
     <select class="method-size" name="search_method">
-      <option value="method1">TF-IDF pro (default)</option>
-      <option value="method2">Neural search</option>
+      {% if option == "tfidf" %}
+      <option value="method1" selected>TF-IDF pro (default)</option>
+      <option value="method2">Semantic search</option>
       <option value="method3">Vector search</option>
+      {% elif option == "semantic" %}
+      <option value="method1">TF-IDF pro (default)</option>
+      <option value="method2" selected>Semantic search</option>
+      <option value="method3">Vector search</option>
+      {% endif %}
     </select>
   </form>
   <form action="/sort" method="post" >

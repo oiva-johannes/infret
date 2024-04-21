@@ -336,6 +336,14 @@ def main():
     updated_documents = read_data()
     documents = updated_documents["text"].tolist()
     lemmatize_documents(documents)
+    
+    documents = read_lemmatized_documents()
+    convert_to_tagged(documents)
+    tagged_docs = load_tagged()
+    print("training model:")
+    create_vectors(tagged_docs)
+    print("done")
+
     #df.to_parquet('dynamic-datasets/articles.parquet')
 
 

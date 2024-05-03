@@ -78,8 +78,6 @@ def ScrapeYle(articles: list[pd.DataFrame]):
     already_seen = set()
     
     for index, (headline, image_src) in enumerate(headlines):
-        if headline.text not in already_seen:
-            already_seen.add(headline.text)
             
             href = re.findall('href.*\">', str(headline))[0]
             if "https://areena.yle.fi" in href:
@@ -90,6 +88,12 @@ def ScrapeYle(articles: list[pd.DataFrame]):
                 href = "https://yle.fi"+href[6:-2]
             else:
                 href = href[6:-2]
+
+            if href not in already_seen:
+                already_seen.add(href)
+            else:
+                print(None, "YLE: seen already")
+                continue
 
             if href in old_links:
                 print(None, "YLE: old href")
@@ -124,28 +128,27 @@ def ScrapeYle(articles: list[pd.DataFrame]):
                 fin_zone = datetime.now(ZoneInfo("Europe/Helsinki"))
                 date = fin_zone.strftime('%d.%m.%Y')
             
-            
 
             text = content.text
             popularity = index+1
             provider = "YLE"
             header = headline.text
 
-        response = requests.get(image_src)
+            response = requests.get(image_src)
 
-        if response.status_code == 200:
-            # The content of the response contains the image binary data
-            req_image = response.content
+            if response.status_code == 200:
+                # The content of the response contains the image binary data
+                req_image = response.content
 
-            # Specify the location and name of the file to save the image
-            
-            imagepath = f'static/images/{href.replace("/", "_")}.png'
+                # Specify the location and name of the file to save the image
+                
+                imagepath = f'static/images/{href.replace("/", "_")}.png'
 
-            # Open a file in binary write mode and write the image data
-            with open(imagepath, 'wb') as f:
-                f.write(req_image)
-            resize_image(imagepath, imagepath, 200, 125)
-            print("Image done")
+                # Open a file in binary write mode and write the image data
+                with open(imagepath, 'wb') as f:
+                    f.write(req_image)
+                resize_image(imagepath, imagepath, 200, 125)
+                print("Image done")
 
 
             df = pd.DataFrame({
@@ -219,17 +222,18 @@ def ScrapeIS(articles: list[pd.DataFrame]):
     for index, (headline,image_src) in enumerate(headlines):
         if headline == None:
             continue
-        if headline.text not in already_seen:
-            already_seen.add(headline.text)
-        else:
-            print(None, "IS: seen already")
-            continue
 
         href_ending = headline.get('href')
         if "http" in href_ending or "mainos" in href_ending:
             print(None, "IS: wrong type")
             continue
         href = "https://www.is.fi"+href_ending
+
+        if href not in already_seen:
+            already_seen.add(href)
+        else:
+            print(None, "IS: seen already")
+            continue
 
         if href in old_links:
             print(None, "IS: old href")
@@ -362,11 +366,6 @@ def ScrapeHS(articles: list[pd.DataFrame]):
     for index, (headline,image_src) in enumerate(headlines):
         if headline == None:
             continue
-        if headline.text not in already_seen:
-            already_seen.add(headline.text)
-        else:
-            print(None, "HS: seen already")
-            continue
 
         href_ending = headline.get('href')
         
@@ -374,6 +373,12 @@ def ScrapeHS(articles: list[pd.DataFrame]):
             print(None, "HS: wrong type")
             continue
         href = "https://www.hs.fi"+href_ending
+
+        if href not in already_seen:
+            already_seen.add(href)
+        else:
+            print(None, "HS: seen already")
+            continue
 
         if href in old_links:
             print(None, "HS: old href")

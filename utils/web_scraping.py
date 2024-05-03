@@ -1,4 +1,4 @@
-import time
+from time import sleep
 import os.path
 import requests
 import re
@@ -6,7 +6,8 @@ import pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dateutil import parser
-from utils.utils import read_data, write_data, lemmatize_documents
+from utils.utils import read_data, write_data, lemmatize_documents, read_lemmatized_documents
+from utils.pil import resize_image
 from utils.dates_delete import filter_dates
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -15,6 +16,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+from PIL import Image
+from search_methods.semantic_search import convert_to_tagged, load_tagged, create_vectors
 
 
 ## Setup chrome options
@@ -34,15 +37,47 @@ def ScrapeYle(articles: list[pd.DataFrame]):
     if articles:
         old_links = articles[0].to_dict('list')['href']
 
-    source = requests.get("https://yle.fi")
-    source.raise_for_status() #Raises an error if there is a problem with the url
+    driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+    driver.get("https://yle.fi")
+    sleep(2)
+    print("Waiting for few seconds...")
+    # Get the total height of the page
+    total_height = driver.execute_script("return document.body.scrollHeight")
 
-    soup = BeautifulSoup(source.text, "html.parser")
-    headlines = soup.find_all('a', class_="underlay-link") #Find all the headers 
+    # Set how many pixels you want to scroll each step
+    step_size = 300
+
+    # Gradually scroll down the page
+    for y in range(0, total_height, step_size):
+        driver.execute_script(f"window.scrollTo(0, {y});")
+        sleep(0.1)  # Adjust sleep time as needed for the page to render.
+
+    # Scroll to the very bottom to ensure the entire page is loaded
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+
+    # Now that the page is loaded, including dynamic content, get the page source
+    html = driver.page_source
+    driver.quit()
+
+    # Parse the content with BeautifulSoup
+    soup = BeautifulSoup(html, 'html.parser')
+
+    news_main = soup.main
+    headlines = []
+
+    for child in news_main:
+        img_tag = child.img
+        if img_tag and 'src' in img_tag.attrs:
+            image_src = img_tag['src']
+            headline = child.find('a', class_="underlay-link")
+            headlines.append((headline,image_src))
+
+    #headlines = soup.find_all('a', class_="underlay-link") #Find all the headers 
 
     already_seen = set()
     
-    for index, headline in enumerate(headlines):
+    for index, (headline, image_src) in enumerate(headlines):
         if headline.text not in already_seen:
             already_seen.add(headline.text)
             
@@ -88,12 +123,29 @@ def ScrapeYle(articles: list[pd.DataFrame]):
             else:
                 fin_zone = datetime.now(ZoneInfo("Europe/Helsinki"))
                 date = fin_zone.strftime('%d.%m.%Y')
-
+            
+            
 
             text = content.text
             popularity = index+1
             provider = "YLE"
             header = headline.text
+
+        response = requests.get(image_src)
+
+        if response.status_code == 200:
+            # The content of the response contains the image binary data
+            req_image = response.content
+
+            # Specify the location and name of the file to save the image
+            
+            imagepath = f'static/images/{href.replace("/", "_")}.png'
+
+            # Open a file in binary write mode and write the image data
+            with open(imagepath, 'wb') as f:
+                f.write(req_image)
+            resize_image(imagepath, imagepath, 200, 125)
+            print("Image done")
 
 
             df = pd.DataFrame({
@@ -103,10 +155,10 @@ def ScrapeYle(articles: list[pd.DataFrame]):
                 "date": date,
                 "provider": provider,
                 "paragraph": paragraph,
+                "imagepath": imagepath,
                 "text": text,}, index=[len(articles)+1])
             
             articles.append(df)
-
 
 def ScrapeIS(articles: list[pd.DataFrame]):
 
@@ -120,15 +172,24 @@ def ScrapeIS(articles: list[pd.DataFrame]):
     driver.get("https://www.is.fi")
 
     # Extract description from page and print
-
-    iframe = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "sp_message_iframe_1054507")))
+    iframe = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//iframe[@title="SP Consent Message"]')))
     driver.switch_to.frame(iframe)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[@title="OK"]'))).click()
-
+    sleep(2)
     print("Waiting for few seconds...")
-    time.sleep(10)  # Adjust sleep time as necessary
+    # Get the total height of the page
+    total_height = driver.execute_script("return document.body.scrollHeight")
+
+    # Set how many pixels you want to scroll each step
+    step_size = 300
+
+    # Gradually scroll down the page
+    for y in range(0, total_height, step_size):
+        driver.execute_script(f"window.scrollTo(0, {y});")
+        sleep(0.1)  # Adjust sleep time as needed for the page to render.
+
+    # Scroll to the very bottom to ensure the entire page is loaded
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(10)
 
     # Now that the page is loaded, including dynamic content, get the page source
     html = driver.page_source
@@ -137,13 +198,27 @@ def ScrapeIS(articles: list[pd.DataFrame]):
     # Parse the content with BeautifulSoup
     soup = BeautifulSoup(html, 'html.parser')
 
+    headlines = []
     # Now you can use BeautifulSoup as before to parse the page
-    section = soup.find('section', class_="w-full max-w-main lg:w-main")
-    headlines = section.find_all('a', class_='block')
+    sections = soup.find('section', class_="w-full max-w-main lg:w-main")
+    for section in sections:
+        is_articles = section.find_all('article')
+        for is_article in is_articles:
+            img_tag = is_article.img
+            if img_tag and 'src' in img_tag.attrs:
+                image_src = img_tag['src']
+                headline = is_article.find('a', class_='block')
+                headlines.append((headline,image_src))
+
+    #print(headlines[:2])
+    #print(len(headlines))
+    #headlines = section.find_all('a', class_='block')
 
     already_seen = set()
 
-    for index, headline in enumerate(headlines):
+    for index, (headline,image_src) in enumerate(headlines):
+        if headline == None:
+            continue
         if headline.text not in already_seen:
             already_seen.add(headline.text)
         else:
@@ -199,6 +274,22 @@ def ScrapeIS(articles: list[pd.DataFrame]):
         popularity = index+1
         provider = "IS"
 
+        response = requests.get(image_src)
+
+        if response.status_code == 200:
+            # The content of the response contains the image binary data
+            req_image = response.content
+
+            # Specify the location and name of the file to save the image
+            
+            imagepath = f'static/images/{href.replace("/", "_")}.png'
+
+            # Open a file in binary write mode and write the image data
+            with open(imagepath, 'wb') as f:
+                f.write(req_image)
+            resize_image(imagepath, imagepath, 200, 125)
+            print("Image done")
+
         
         df = pd.DataFrame({
                     "popularity": popularity,
@@ -207,6 +298,7 @@ def ScrapeIS(articles: list[pd.DataFrame]):
                     "date": date,
                     "provider": provider,
                     "paragraph": paragraph,
+                    "imagepath": imagepath,
                     "text": text,}, index=[len(articles)+1])
         
         articles.append(df)
@@ -224,14 +316,24 @@ def ScrapeHS(articles: list[pd.DataFrame]):
     driver.get("https://www.hs.fi")
     # Extract description from page and print
 
-    iframe = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "sp_message_iframe_1054505")))
+    iframe = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//iframe[@title="SP Consent Message"]')))
     driver.switch_to.frame(iframe)
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//button[@title="OK"]'))).click()
-
+    sleep(2)
     print("Waiting for few seconds...")
-    time.sleep(10)  # Adjust sleep time as necessary
+    # Get the total height of the page
+    total_height = driver.execute_script("return document.body.scrollHeight")
+
+    # Set how many pixels you want to scroll each step
+    step_size = 300
+
+    # Gradually scroll down the page
+    for y in range(0, total_height, step_size):
+        driver.execute_script(f"window.scrollTo(0, {y});")
+        sleep(0.1)  # Adjust sleep time as needed for the page to render.
+
+    # Scroll to the very bottom to ensure the entire page is loaded
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(10)
 
     # Now that the page is loaded, including dynamic content, get the page source
     html = driver.page_source
@@ -240,13 +342,26 @@ def ScrapeHS(articles: list[pd.DataFrame]):
     # Parse the content with BeautifulSoup
     soup = BeautifulSoup(html, 'html.parser')
 
+    headlines = []
     # Now you can use BeautifulSoup as before to parse the page
-    section = soup.find('section', class_="flex justify-start sm:justify-center lg:justify-start")
-    headlines = section.find_all('a', href=True)
+    sections = soup.find('section', class_="w-full max-w-main lg:w-main")
+    for section in sections:
+        hs_articles = section.find_all('article')
+        for hs_article in hs_articles:
+            img_tag = hs_article.img
+            if img_tag and 'src' in img_tag.attrs:
+                image_src = img_tag['src']
+                headline = hs_article.find('a', class_='block')
+                headlines.append((headline,image_src))
+
+    #section = soup.find('section', class_="flex justify-start sm:justify-center lg:justify-start")
+    #headlines = section.find_all('a', href=True)
 
     already_seen = set()
 
-    for index, headline in enumerate(headlines):
+    for index, (headline,image_src) in enumerate(headlines):
+        if headline == None:
+            continue
         if headline.text not in already_seen:
             already_seen.add(headline.text)
         else:
@@ -303,6 +418,21 @@ def ScrapeHS(articles: list[pd.DataFrame]):
         popularity = index+1
         provider = "HS"
 
+        response = requests.get(image_src)
+
+        if response.status_code == 200:
+            # The content of the response contains the image binary data
+            req_image = response.content
+
+            # Specify the location and name of the file to save the image
+            
+            imagepath = f'static/images/{href.replace("/", "_")}.png'
+
+            # Open a file in binary write mode and write the image data
+            with open(imagepath, 'wb') as f:
+                f.write(req_image)
+            resize_image(imagepath, imagepath, 200, 125)
+            print("Image done")
 
         df = pd.DataFrame({
                     "popularity": popularity,
@@ -311,6 +441,7 @@ def ScrapeHS(articles: list[pd.DataFrame]):
                     "date": date,
                     "provider": provider,
                     "paragraph": paragraph,
+                    "imagepath": imagepath,
                     "text": text,}, index=[len(articles)+1])
         
         articles.append(df)
@@ -340,9 +471,9 @@ def main():
     documents = read_lemmatized_documents()
     convert_to_tagged(documents)
     tagged_docs = load_tagged()
-    print("training model:")
+    print("training the model:")
     create_vectors(tagged_docs)
-    print("done")
+    print("Training done!")
 
     #df.to_parquet('dynamic-datasets/articles.parquet')
 

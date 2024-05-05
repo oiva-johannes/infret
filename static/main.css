@@ -50,10 +50,6 @@ input:autofill {
   font-size: 1.15em;
 }
 
-.info {
-
-}
-
 .search-size {
   width: 200px;
 }
@@ -137,7 +133,7 @@ a:hover {
 
 .article {
   width: 500px;
-  height: 205px;  /* 255*/
+  height: 215px;  /* 255*/
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -204,6 +200,18 @@ ul {
   list-style-type: none;
   width: 1110px;
 }
+
+/* Styles for tablets and mobile devices */
+@media (max-width: 768px) {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    list-style-type: none;
+    width: 525px;
+  }
+}
+
 
 li {
   box-sizing: border-box;

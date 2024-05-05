@@ -67,8 +67,6 @@ def sort():
     global df, lemmatized, state, articles, option
 
     if request.method == 'POST':
-        print(state)
-        print(request.form)
         if "Suositut" in request.form['sort_button']:
             if state == "popular-top":
                 state = "popular-bot"

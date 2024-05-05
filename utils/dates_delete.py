@@ -24,12 +24,10 @@ def filter_dates():
     directory = os.fsencode("static/images/")
     updated_df = read_data()
     links = set(updated_df.to_dict('list')['href'])
-    print(f"unique links: {len(links)}")
 
     for file in os.listdir(directory):
         filename1 = os.fsdecode(file)
         filename2 = filename1.replace("_", "/")[:-4]
         if filename2 in links:
-            print("image not removed")
             continue
         os.remove(f"static/images/{filename1}")

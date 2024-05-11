@@ -14,8 +14,23 @@
 <body>
   <h1 class="pagetitle"><a href="/">UutisetNyt <span class="noto-color">🌍</span></a></h1>
   <form class="search" action="/search" method="POST">
-    <input type="text" name="query">
-    <input type="submit" value="Haku">
+    <input class="search-size" type="text" name="query">
+    <input class="search-button-size" type="submit" value="🔍">
+    <select class="method-size" name="search_method">
+      {% if option == "tfidf" %}
+      <option value="method1" selected>TF-IDF pro (default)</option>
+      <option value="method2">Neural search (doc2vec)</option>
+      <option value="method3">Semantic search (transformer)</option>
+      {% elif option == "neural" %}
+      <option value="method1">TF-IDF pro (default)</option>
+      <option value="method2" selected>Neural search (doc2vec)</option>
+      <option value="method3">Semantic search (transformer)</option>
+      {% elif option == "semantic" %}
+      <option value="method1">TF-IDF pro (default)</option>
+      <option value="method2">Neural search (doc2vec)</option>
+      <option value="method3" selected>Semantic search (transformer)</option>
+      {% endif %}
+    </select>
   </form>
   <form action="/sort" method="post" >
     {% if state == "popular-top" %}
@@ -45,9 +60,14 @@
     {% endif %}
   </form>
   {% if state == "info-top" %}
-    <img src="static/ner_plot_gpe.png" alt="Tietoa">
+  <div class="info-box">
+    <h3>Tietoa</h3>
+    <p><b>UutisetNyt</b> on tehokkain tapa saada kaikki päivän tärkeimmät uutiset, sillä autamme sinua löytämään ajankohtaiset aiheet monelta eri suomalaiselta medialta!<br><br>Tarkalleen ottaen <b>UutisetNyt</b> on aggregaattori, hakukone ja suosittelujärjestelmä suomenkielisille uutisille, siten että jokainen linkki uudelleenohjaa alkuperäiseen artikkeliin.<br><br>Voit ottaa meihin yhteyttä: [<b>s</b> <i>at-sign</i> <b>posti</b> <i>dot</i> <b>com</b>].<br>Kaikki palaute ja ehdotukset ovat tervetulleita!</p>
+  </div>
   {% else %}
-    <img src="static/ner_plot_person.png" alt="Tietoa">
+  <div class="info-box">
+    <h3>About</h3>
+    <p><b>UutisetNyt</b> is the most efficient way of getting your daily news, because we will help you to find the top news from many different Finnish medias!<br><br>In precise terms <b>UutisetNyt</b> is aggregator, search engine and recommendation system for Finnish news, so that every link redirects to their original source.<br><br>You can contact us: [<b>s</b> <i>at-sign</i> <b>posti</b> <i>dot</i> <b>com</b>].<br>Any feedback or recommendations are welcomed!</p>
   {% endif %}
 </body>
 </html>

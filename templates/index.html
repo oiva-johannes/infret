@@ -19,12 +19,16 @@
     <select class="method-size" name="search_method">
       {% if option == "tfidf" %}
       <option value="method1" selected>TF-IDF pro (default)</option>
-      <option value="method2">Semantic search</option>
-      <option value="method3">Vector search</option>
+      <option value="method2">Neural search (doc2vec)</option>
+      <option value="method3">Semantic search (transformer)</option>
+      {% elif option == "neural" %}
+      <option value="method1">TF-IDF pro (default)</option>
+      <option value="method2" selected>Neural search (doc2vec)</option>
+      <option value="method3">Semantic search (transformer)</option>
       {% elif option == "semantic" %}
       <option value="method1">TF-IDF pro (default)</option>
-      <option value="method2" selected>Semantic search</option>
-      <option value="method3">Vector search</option>
+      <option value="method2">Neural search (doc2vec)</option>
+      <option value="method3" selected>Semantic search (transformer)</option>
       {% endif %}
     </select>
   </form>

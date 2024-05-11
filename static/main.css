@@ -133,7 +133,7 @@ a:hover {
 
 .article {
   width: 500px;
-  height: 215px;  /* 255*/
+  height: 250px;  /* 255*/
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: 5px;
@@ -225,3 +225,16 @@ p {
   margin: 0px;
 }
 
+.info-box {
+  font-size: 1.1em;
+  width: 500px;
+  height: 330px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding: 10px;
+  background-color: rgb(41, 43, 44);
+  border: 2px solid rgb(223, 220, 212);
+  border-radius: 15px;
+}

@@ -1,61 +1,55 @@
-from nltk import word_tokenize
-import gensim
-import spacy
-from utils.utils import read_lemmatized_documents, read_articles_only
-import pickle
+import torch
+from utils.utils import read_lemmatized_documents
+from sentence_transformers import SentenceTransformer, util
+import numpy as np
 
 
-nlp = spacy.load("fi_core_news_sm") # load the model that will be used for the task
+def generate_semantic_embeddings():
 
-def convert_to_tagged(documents: list):
-    docs = []
-    piped_documents = nlp.pipe(documents)
-    for i, document in enumerate(piped_documents):
-        filtered_doc = [token.text for token in document if not token.is_stop] # filter out all tokens that are stopwords
-        doc = gensim.models.doc2vec.TaggedDocument(filtered_doc, [i]) # create Tagged Documents
-        docs.append(doc)
-            
-    with open('pickle_tagged.pkl', 'wb') as file:
-        pickle.dump(docs, file)
-
-
-def load_tagged(file_name: str = 'pickle_tagged.pkl'):
-    # Load the tagged documents from a file using pickle
-    with open(file_name, 'rb') as file:
-        tagged_docs = pickle.load(file)
-    return tagged_docs
-
-    
-def create_vectors(tagged_docs: list): # create document vectors using the tagged documents
-    model = gensim.models.doc2vec.Doc2Vec(vector_size=300, min_count=2, epochs=25, window=20) 
-    model.build_vocab(tagged_docs)
-    model.train(tagged_docs, total_examples=model.corpus_count, epochs=model.epochs)
-    model.save('semantic_gensim_model')
-
-
-def load_model(model_name: str = 'semantic_gensim_model'):
-    return gensim.models.doc2vec.Doc2Vec.load(model_name)
-
-
-def semantic_query(query: str, model: list, documents: list) -> list[tuple]:
-    q = nlp(query)
-    q_without_stopwords = [token.text for token in q if not token.is_stop]
-    q_tokens = word_tokenize(' '.join(q_without_stopwords), language='finnish')
-    query_vector = model.infer_vector(q_tokens)
-    most_similar = model.dv.most_similar([query_vector])
-    print(most_similar) 
-    return most_similar
-
-if __name__ == "__main__":
-    # testing
+    # supports Finnish language
+    model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+    # tokenizer = transformers.BertTokenizer.from_pretrained("TurkuNLP/bert-base-finnish-cased-v1")
+    model.eval()
+    if torch.cuda.is_available():
+        model = model.cuda()
+    else:
+        print("cuda not available")
     documents = read_lemmatized_documents()
-    #convert_to_tagged(documents)
-    #tagged_docs = load_tagged()
-    #print("training model:")
-    #create_vectors(tagged_docs)´
+    print("generating embeddings...")
+    corpus_embeddings = model.encode(documents, convert_to_tensor=True).cpu()
+    np.savez_compressed("semantic_embeddings.npz", data=corpus_embeddings)
 
-    #some test queries
-    query = "stubb vaimo"
-    original_documents = read_articles_only()
-    semantic_query(query, load_model(), original_documents)
+
+def bert_query(q: str):
+    emb_file = np.load("semantic_embeddings.npz")
+    corpus_embeddings = torch.from_numpy(emb_file["data"]).to("cpu")
+
+    model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+    query_embedding = model.encode(q, convert_to_tensor=True).cpu()
+
+    # cosine similarity and torch.topk to find the highest 5 scores
+    print("generating query scores")
+    cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
+    most_similar = torch.topk(cos_scores, k=5)
+    scores = [(score.item(), idx.item()) for score, idx in zip(most_similar[0], most_similar[1])]
+    by_scores = sorted(scores, key=lambda x: x[0], reverse=True)
+    return by_scores
+
+
+if __name__=="__main__":
+    # some test queries in Finnish
+    queries = [
+    "Kotkot on paras kana paikka Helsingissä.",
+    "Siellä on myös banger musat.",
+    "Ja sen sijanti kalliossa on mainio, kivan lähellä Helsingin Yliopistoa.",]
     
+    generate_semantic_embeddings()
+
+    result = bert_query(queries[0])
+    print(result)
+    result = bert_query(queries[1])
+    print(result)
+    result = bert_query(queries[2])
+    print(result)
+    result = bert_query("tyhmä")
+    print(result)

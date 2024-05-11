@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from search_methods.cosine_search import search_documents
-from search_methods.semantic_search import semantic_query, load_model
+from search_methods.neural_search import semantic_query, load_model
+from search_methods.semantic_search import bert_query
 from utils.utils import read_data, read_lemmatized_documents
 import pandas as pd
 
@@ -48,11 +49,19 @@ def search():
             return render_template('index.html', articles=result, state=state, option=option)
         
         if request.form['search_method'] == 'method2':
-            option = "semantic"
+            option = "neural"
             
             result = semantic_query(query, load_model(), data)
             result = [r[0] for r in result]
             result = [articles[r] for r in result]
+            return render_template('index.html', articles=result, state=state, option=option)
+        
+        if request.form['search_method'] == 'method3':
+            option = "semantic"
+            
+            result = bert_query(query)
+            print(result)
+            result = [articles[i[1]] for i in result]
             return render_template('index.html', articles=result, state=state, option=option)
             
     
